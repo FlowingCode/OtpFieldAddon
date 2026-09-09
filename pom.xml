@@ -5,21 +5,22 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.flowingcode.vaadin.addons</groupId>
-    <artifactId>template-addon</artifactId>
+    <artifactId>otp-field-addon</artifactId>
     <version>1.0.0-SNAPSHOT</version>
-    <name>Template Add-on</name>
-    <description>Template Add-on for Vaadin Flow</description>
+    <name>OTP Field Add-On</name>
+    <description>Field for entering one-time passwords and verification codes</description>
     <url>https://www.flowingcode.com/en/open-source/</url>
 
     <properties>
-        <vaadin.version>24.9.1</vaadin.version>
+        <vaadin.version>25.2.6</vaadin.version>
         <selenium.version>4.10.0</selenium.version>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <drivers.dir>${project.basedir}/drivers</drivers.dir>
-        <jetty.version>11.0.20</jetty.version>
+        <jetty.version>11.0.26</jetty.version>
+        <jetty.http.port>8080</jetty.http.port>
         <flowingcode.commons.demo.version>5.4.0</flowingcode.commons.demo.version>
         <lombok.version>1.18.40</lombok.version>
     </properties>
@@ -39,9 +40,9 @@
     </licenses>
 
     <scm>
-        <url>https://github.com/FlowingCode/AddonStarter24</url>
-        <connection>scm:git:git://github.com/FlowingCode/AddonStarter24.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com:/FlowingCode/AddonStarter24.git</developerConnection>
+        <url>https://github.com/FlowingCode/OtpFieldAddon</url>
+        <connection>scm:git:git://github.com/FlowingCode/OtpFieldAddon.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com:/FlowingCode/OtpFieldAddon.git</developerConnection>
         <tag>master</tag>
     </scm>
     
@@ -69,6 +70,11 @@
         <dependency>
             <groupId>com.vaadin</groupId>
             <artifactId>vaadin-core</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.vaadin</groupId>
+            <artifactId>vaadin-dev</artifactId>
             <optional>true</optional>
         </dependency>
         <dependency>
@@ -100,11 +106,24 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>3.1.0</version>
-            <type>jar</type>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <version>6.1.0</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <!-- Accessibility scanning for the integration tests; not a release gate, see specs. -->
+            <groupId>com.deque.html.axe-core</groupId>
+            <artifactId>selenium</artifactId>
+            <version>4.10.1</version>
+            <scope>test</scope>
+            <exclusions>
+                <!-- Selenium comes from the Vaadin BOM through vaadin-testbench. -->
+                <exclusion>
+                    <groupId>org.seleniumhq.selenium</groupId>
+                    <artifactId>selenium-java</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>io.github.bonigarcia</groupId>
@@ -273,7 +292,7 @@
                             <doclint>none</doclint>
 							<failOnWarnings>true</failOnWarnings>
                             <links>
-                                <link>https://javadoc.io/doc/com.vaadin/vaadin-platform-javadoc/${vaadin.version}</link>								
+                                <link>https://javadoc.flowingcode.com/artifact/com.vaadin/vaadin-platform-javadoc/${vaadin.version}</link>								
                             </links>
                         </configuration>
                     </plugin>
@@ -370,11 +389,16 @@
                         <configuration>
                             <trimStackTrace>false</trimStackTrace>
                             <enableAssertions>true</enableAssertions>
+                            <useSystemClassLoader>false</useSystemClassLoader>
                             <systemPropertyVariables>
                                 <!-- Pass location of downloaded webdrivers to the tests -->
                                 <webdriver.chrome.driver>
                                     ${webdriver.chrome.driver}
                                 </webdriver.chrome.driver>
+                                <!-- One browser at a time: parallel Chrome instances alongside the
+                                     frontend dev server exhaust the memory of a CI runner. -->
+                                <com.vaadin.testbench.Parameters.testsInParallel>1</com.vaadin.testbench.Parameters.testsInParallel>
+                                <test.server.port>${jetty.http.port}</test.server.port>
                             </systemPropertyVariables>
                         </configuration>
                     </plugin>
@@ -648,27 +672,6 @@
             </build>
         </profile>
 		
-        <profile>
-            <id>v25</id>
-            <properties>
-                <maven.compiler.source>21</maven.compiler.source>
-                <maven.compiler.target>21</maven.compiler.target>
-                <vaadin.version>25.0.3</vaadin.version>
-            </properties>
-            <dependencies>
-                <dependency>
-                    <groupId>com.vaadin</groupId>
-                    <artifactId>vaadin-dev</artifactId>
-                    <optional>true</optional>
-                </dependency>
-                <dependency>
-                    <groupId>jakarta.servlet</groupId>
-                    <artifactId>jakarta.servlet-api</artifactId>
-                    <version>6.1.0</version>
-                    <scope>test</scope>
-                </dependency>
-            </dependencies>
-        </profile>
     </profiles>
 
 </project>

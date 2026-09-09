@@ -1,15 +1,15 @@
 /*-
  * #%L
- * Template Add-on
+ * OTP Field Add-On
  * %%
  * Copyright (C) 2026 Flowing Code
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,7 +18,7 @@
  * #L%
  */
 
-package com.flowingcode.vaadin.addons.template.it;
+package com.flowingcode.vaadin.addons.otpfield.it;
 
 import com.vaadin.testbench.ScreenshotOnFailureRule;
 import com.vaadin.testbench.TestBench;
@@ -27,7 +27,10 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 
 /**
  * Base class for ITs
@@ -43,7 +46,14 @@ import org.openqa.selenium.chrome.ChromeDriver;
  * href="https://vaadin.com/docs/v10/testbench/testbench-overview.html">Vaadin TestBench</a>.
  */
 public abstract class AbstractViewTest extends ParallelTest {
-  private static final int SERVER_PORT = 8080;
+  /** How long to wait for the frontend build on the first navigation. */
+  private static final int STARTUP_TIMEOUT_SECONDS = 60;
+
+  /** How many times to reload before giving up on the demo becoming ready. */
+  private static final int NAVIGATION_ATTEMPTS = 3;
+
+  /** The port the demo is served on, overridable with {@code -Dtest.server.port}. */
+  private static final int SERVER_PORT = Integer.getInteger("test.server.port", 8080);
 
   private final String route;
 
@@ -68,9 +78,52 @@ public abstract class AbstractViewTest extends ParallelTest {
     if (isUsingHub()) {
       super.setup();
     } else {
-      setDriver(TestBench.createDriver(new ChromeDriver()));
+      setDriver(TestBench.createDriver(new ChromeDriver(chromeOptions())));
     }
-    getDriver().get(getURL(route));
+    open(route);
+  }
+
+  /**
+   * Navigates to a route of the demo and waits until the Flow client has bootstrapped.
+   * <p>
+   * In development mode the frontend dev server may still be compiling when the first test
+   * navigates, which leaves the browser on a page whose bundle never loaded. Reloading is the only
+   * way out of that, so the navigation is retried a few times.
+   *
+   * @param route the route to open, relative to the deployment
+   */
+  protected void open(String route) {
+    for (int attempt = 0; attempt < NAVIGATION_ATTEMPTS; attempt++) {
+      getDriver().get(getURL(route));
+      try {
+        waitUntil(driver -> isClientBootstrapped(), STARTUP_TIMEOUT_SECONDS);
+        return;
+      } catch (TimeoutException e) {
+        // The frontend was probably still being built; navigate again.
+      }
+    }
+    throw new IllegalStateException("The demo did not become ready at " + getURL(route));
+  }
+
+  private boolean isClientBootstrapped() {
+    return Boolean.TRUE.equals(((JavascriptExecutor) getDriver()).executeScript(
+        "const flow = window.Vaadin && window.Vaadin.Flow;"
+            + "return !!(flow && flow.clients && Object.keys(flow.clients).length > 0)"));
+  }
+
+  /**
+   * Chrome runs headless unless {@code -Dtest.headed=true} is passed, so that the tests behave the
+   * same on a CI runner without a display.
+   *
+   * @return the options to create the driver with
+   */
+  protected ChromeOptions chromeOptions() {
+    ChromeOptions options = new ChromeOptions();
+    if (!Boolean.getBoolean("test.headed")) {
+      options.addArguments("--headless=new", "--disable-gpu", "--no-sandbox",
+          "--disable-dev-shm-usage", "--window-size=1280,1024");
+    }
+    return options;
   }
 
   /**
