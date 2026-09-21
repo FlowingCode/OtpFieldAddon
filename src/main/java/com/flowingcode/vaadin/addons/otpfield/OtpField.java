@@ -449,7 +449,10 @@ public class OtpField extends AbstractSinglePropertyField<OtpField, String>
   }
 
   /**
-   * Adds a listener that is notified when the entered code becomes complete.
+   * Adds a listener that is notified when the entered code is complete.
+   * <p>
+   * The listener is notified again whenever the user edits a complete code into a different one, so
+   * a code corrected after a failed verification is reported once more.
    *
    * @param listener the listener to add, not {@code null}
    * @return a registration for removing the listener

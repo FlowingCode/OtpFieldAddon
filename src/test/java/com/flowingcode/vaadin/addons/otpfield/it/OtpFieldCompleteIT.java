@@ -23,11 +23,13 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.openqa.selenium.Keys;
 
 /**
- * The complete event and application-driven errors, exercised on the verification demo. That demo
- * uses {@code ValueChangeMode.ON_CHANGE}, so it also covers that partial codes are not transmitted
- * while the complete event still arrives.
+ * The complete event reaching the server, and application-driven errors, exercised on the
+ * verification demo. That demo uses {@code ValueChangeMode.ON_CHANGE}, so it also covers that
+ * partial codes are not transmitted while the complete event still arrives. When the event fires is
+ * covered client-side by {@code OtpFieldIT}.
  */
 public class OtpFieldCompleteIT extends AbstractViewTest {
 
@@ -73,7 +75,32 @@ public class OtpFieldCompleteIT extends AbstractViewTest {
     waitUntil(driver -> "Code accepted".equals(resultText()));
   }
 
+  @Test
+  public void anEditedCompleteCodeReachesTheServerAgain() {
+    openBasicDemo();
+    otp.type("123456");
+    waitUntil(driver -> "Complete: 123456".equals(completeText()));
+
+    otp.type(Keys.HOME);
+    otp.type("9");
+    waitUntil(driver -> "Complete: 923456".equals(completeText()));
+  }
+
+  /**
+   * The verification demo empties the field on a wrong code, so editing a code that is already
+   * complete is exercised on the basic demo instead, which reports every complete event it
+   * receives.
+   */
+  private void openBasicDemo() {
+    open("otpfield/basic");
+    otp = $(OtpFieldElement.class).waitForFirst();
+  }
+
   private String resultText() {
     return $("span").id("result").getText().trim();
+  }
+
+  private String completeText() {
+    return $("span").id("complete").getText().trim();
   }
 }

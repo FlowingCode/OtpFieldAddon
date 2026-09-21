@@ -228,9 +228,11 @@ Requirement IDs are referenced by the acceptance criteria (§17) and the test pl
 - **FR-23** `ValueChangeEvent` follows `ValueChangeMode`, defaulting to `EAGER` (each keystroke), and
   supports `ON_CHANGE`, `LAZY` and `TIMEOUT` for applications that would rather not send partial
   codes on every keystroke.
-- **FR-24** `OtpCompleteEvent` fires when the value becomes complete, regardless of
-  `ValueChangeMode`, and carries the value. It fires again if the value becomes incomplete and then
-  complete once more. It does **not** fire for a programmatic `setValue`.
+- **FR-24** `OtpCompleteEvent` fires whenever user input leaves a complete value that differs from
+  the previous one, regardless of `ValueChangeMode`, and carries the value. It therefore fires again
+  when a complete code is edited into another complete code — a character replaced, or another code
+  pasted over it — as well as when the value becomes incomplete and complete once more. It does
+  **not** fire for a programmatic `setValue`.
 - **FR-25** `clear()` empties the field and returns the caret to the first slot.
 
 ### 7.5 Validation

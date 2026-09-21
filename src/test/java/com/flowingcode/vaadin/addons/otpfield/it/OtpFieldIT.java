@@ -254,6 +254,61 @@ public class OtpFieldIT extends AbstractViewTest {
     assertEquals("246", otp.getOtpValue());
   }
 
+  // -- Complete event (FR-24) ------------------------------------------------------------------
+
+  @Test
+  public void completingTheCodeFiresTheCompleteEvent() {
+    otp.recordCompleteEvents();
+    otp.type("12345");
+    assertEquals(List.of(), otp.getRecordedCompleteEvents());
+
+    otp.type("6");
+    assertEquals(List.of("123456"), otp.getRecordedCompleteEvents());
+  }
+
+  @Test
+  public void replacingACharacterOfACompleteCodeFiresItAgain() {
+    otp.type("123456");
+    otp.recordCompleteEvents();
+
+    otp.type(Keys.HOME);
+    otp.type("9");
+    assertEquals(List.of("923456"), otp.getRecordedCompleteEvents());
+  }
+
+  @Test
+  public void pastingOverACompleteCodeFiresItAgain() {
+    otp.type("123456");
+    otp.recordCompleteEvents();
+
+    otp.type(Keys.chord(Keys.CONTROL, "a"));
+    otp.paste("654321");
+    assertEquals(List.of("654321"), otp.getRecordedCompleteEvents());
+  }
+
+  @Test
+  public void anEditThatLeavesTheCodeUnchangedDoesNotFireIt() {
+    otp.type("123456");
+    otp.recordCompleteEvents();
+
+    // Overwriting a character with the one already there, and typing past the last slot, both
+    // leave the code as it was, so there is nothing to announce.
+    otp.type(Keys.HOME);
+    otp.type("1");
+    otp.type(Keys.END);
+    otp.type("7");
+
+    assertEquals("123456", otp.getOtpValue());
+    assertEquals(List.of(), otp.getRecordedCompleteEvents());
+  }
+
+  @Test
+  public void aProgrammaticValueDoesNotFireIt() {
+    otp.recordCompleteEvents();
+    otp.setElementProperty("value", "123456");
+    assertEquals(List.of(), otp.getRecordedCompleteEvents());
+  }
+
   // -- Presentation (FR-4, FR-5, FR-6, FR-29) ---------------------------------------------------
 
   @Test

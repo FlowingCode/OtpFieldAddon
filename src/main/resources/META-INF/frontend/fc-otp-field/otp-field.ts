@@ -588,11 +588,11 @@ export class OtpField extends OtpFieldBase {
       input.setSelectionRange(Math.min(selectionStart, sanitized.length), Math.min(selectionStart, sanitized.length));
     }
 
-    const wasComplete = this.__isComplete(this.value);
+    const previousValue = this.value;
     super._onInput(event);
     this.__updateCaret();
 
-    if (!wasComplete && this.__isComplete(this.value)) {
+    if (this.value !== previousValue && this.__isComplete(this.value)) {
       this.__notifyComplete();
     }
   }
@@ -898,8 +898,8 @@ export class OtpField extends OtpFieldBase {
   }
 
   /**
-   * Fired when the value reaches `length` because of user input, paste or autofill. It is not
-   * fired for a programmatic value change.
+   * Fired whenever user input, paste or autofill leaves a complete code that differs from the
+   * previous one. It is not fired for a programmatic value change.
    *
    * @event otp-complete
    * @param {Object} detail

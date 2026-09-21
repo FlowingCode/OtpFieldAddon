@@ -25,12 +25,15 @@ import com.vaadin.flow.component.EventData;
 import lombok.Getter;
 
 /**
- * Fired when the code entered in an {@link OtpField} becomes complete, that is, when its length
- * reaches {@link OtpField#getLength()}.
+ * Fired when the code entered in an {@link OtpField} is complete, that is, when its length reaches
+ * {@link OtpField#getLength()}.
  * <p>
  * The event is fired regardless of the {@link com.vaadin.flow.data.value.ValueChangeMode} of the
- * field, and it is fired again if the code becomes incomplete and then complete once more. It is
- * not fired for a programmatic {@link OtpField#setValue(String)}.
+ * field, and it is fired again whenever the user edits a complete code into a different one: by
+ * replacing a character of it, by pasting another code over it, or by making it incomplete and
+ * completing it once more. Every event therefore carries a code that has not been reported before
+ * it, which is what an application verifying the code needs. It is not fired for a programmatic
+ * {@link OtpField#setValue(String)}.
  *
  * @author Flowing Code
  * @since 1.0.0

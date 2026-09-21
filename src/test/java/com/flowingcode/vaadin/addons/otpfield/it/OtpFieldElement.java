@@ -309,4 +309,21 @@ public class OtpFieldElement extends TestBenchElement {
             + ".direction",
         this);
   }
+
+  /** Starts recording the {@code otp-complete} events the field fires. */
+  public void recordCompleteEvents() {
+    executeScript("const field = arguments[0];"
+        + "field.__completeEvents = [];"
+        + "field.addEventListener('otp-complete',"
+        + "  event => field.__completeEvents.push(event.detail.value));", this);
+  }
+
+  /**
+   * Returns the value carried by every {@code otp-complete} event fired since
+   * {@link #recordCompleteEvents()}, in order.
+   */
+  @SuppressWarnings("unchecked")
+  public List<String> getRecordedCompleteEvents() {
+    return (List<String>) executeScript("return arguments[0].__completeEvents || []", this);
+  }
 }

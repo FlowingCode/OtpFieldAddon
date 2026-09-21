@@ -115,6 +115,10 @@ value, and "not finished yet" is a constraint violation rather than a hidden val
 that only care about the finished code use `addCompleteListener` instead of checking the length on
 every value change.
 
+The complete event fires again whenever the user edits a complete code into a different one, whether
+by replacing one of its characters, by pasting another code over it, or by emptying it and typing a
+new one, so a code corrected after a failed verification is verified again.
+
 ```java
 OtpField token = new OtpField("Security token", 8);
 token.setAllowedCharPattern(OtpField.ALPHANUMERIC);
