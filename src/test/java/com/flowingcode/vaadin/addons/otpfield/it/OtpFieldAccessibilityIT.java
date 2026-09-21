@@ -88,7 +88,10 @@ public class OtpFieldAccessibilityIT extends AbstractViewTest {
   public void theInputCarriesTheHintsThatMobileAndPasswordManagersRelyOn() {
     assertEquals("one-time-code", otp.getInputElement().getAttribute("autocomplete"));
     assertEquals("numeric", otp.getInputElement().getAttribute("inputmode"));
-    assertEquals("off", otp.getInputElement().getAttribute("autocorrect"));
-    assertEquals("false", otp.getInputElement().getAttribute("spellcheck"));
+    // autocorrect and spellcheck are read as DOM attributes: both are now reflected by a boolean
+    // IDL property, and getAttribute() answers with that property ("false") rather than with the
+    // markup the field writes.
+    assertEquals("off", otp.getInputElement().getDomAttribute("autocorrect"));
+    assertEquals("false", otp.getInputElement().getDomAttribute("spellcheck"));
   }
 }
