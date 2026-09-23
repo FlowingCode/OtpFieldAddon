@@ -740,7 +740,7 @@ export class OtpField extends OtpFieldBase {
     const end = to == null ? (input.selectionEnd == null ? start : input.selectionEnd) : to;
     const inserted = this.__sanitize(text);
 
-    if (!inserted && start === end) {
+    if (!inserted) {
       return;
     }
 

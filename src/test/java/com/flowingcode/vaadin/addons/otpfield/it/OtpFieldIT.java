@@ -235,6 +235,14 @@ public class OtpFieldIT extends AbstractViewTest {
   }
 
   @Test
+  public void pasteWithoutAcceptedCharactersLeavesTheSelectionAlone() {
+    otp.type("123456");
+    otp.type(Keys.chord(Keys.CONTROL, "a"));
+    otp.paste("abc");
+    assertEquals("123456", otp.getOtpValue());
+  }
+
+  @Test
   public void pasteDiscardsWhatDoesNotFit() {
     otp.focusField();
     otp.paste("1234567890");
