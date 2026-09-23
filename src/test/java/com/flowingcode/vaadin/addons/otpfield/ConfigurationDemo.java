@@ -45,7 +45,8 @@ public class ConfigurationDemo extends VerticalLayout {
     length.setStepButtonsVisible(true);
     length.setValue(otp.getLength());
     length.addValueChangeListener(event -> {
-      if (event.getValue() != null) {
+      // Min and max only mark the field invalid; an out-of-range value still reaches this listener.
+      if (event.getValue() != null && !length.isInvalid()) {
         // Shortening the length truncates the value, which fires a value change event.
         otp.setLength(event.getValue());
       }
