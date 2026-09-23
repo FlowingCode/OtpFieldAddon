@@ -1,6 +1,6 @@
 /*-
  * #%L
- * Template Add-on
+ * OTP Field Add-On
  * %%
  * Copyright (C) 2026 Flowing Code
  * %%
@@ -18,7 +18,7 @@
  * #L%
  */
 
-package com.flowingcode.vaadin.addons.template.it;
+package com.flowingcode.vaadin.addons.otpfield.it;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
@@ -58,7 +58,7 @@ public class ViewIT extends AbstractViewTest {
 
   @Test
   public void componentWorks() {
-    TestBenchElement element = $("paper-input").first();
+    TestBenchElement element = $(OtpFieldElement.class).waitForFirst();
     assertThat(element, hasBeenUpgradedToCustomElement);
   }
 }

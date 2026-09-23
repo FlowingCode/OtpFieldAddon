@@ -1,6 +1,6 @@
 /*-
  * #%L
- * Template Add-on
+ * OTP Field Add-On
  * %%
  * Copyright (C) 2026 Flowing Code
  * %%
@@ -17,20 +17,18 @@
  * limitations under the License.
  * #L%
  */
+package com.flowingcode.vaadin.addons.otpfield;
 
-package com.flowingcode.vaadin.addons.template;
+/** The bean bound by {@link BinderDemo}. */
+public class Enrollment {
 
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.router.BeforeEnterEvent;
-import com.vaadin.flow.router.BeforeEnterObserver;
-import com.vaadin.flow.router.Route;
+  private String token = "";
 
-@SuppressWarnings("serial")
-@Route("")
-public class DemoView extends VerticalLayout implements BeforeEnterObserver {
+  public String getToken() {
+    return token;
+  }
 
-  @Override
-  public void beforeEnter(BeforeEnterEvent event) {
-    event.forwardTo(TemplateDemoView.class);
+  public void setToken(String token) {
+    this.token = token;
   }
 }
