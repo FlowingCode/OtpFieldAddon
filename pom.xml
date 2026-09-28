@@ -4,7 +4,7 @@
 
     <groupId>com.flowingcode.vaadin.addons</groupId>
     <artifactId>otp-field-addon</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1-SNAPSHOT</version>
     <name>OTP Field Add-On</name>
     <description>Field for entering one-time passwords and verification codes</description>
     <url>https://www.flowingcode.com/en/open-source/</url>
@@ -41,7 +41,7 @@
         <url>https://github.com/FlowingCode/OtpFieldAddon</url>
         <connection>scm:git:git://github.com/FlowingCode/OtpFieldAddon.git</connection>
         <developerConnection>scm:git:ssh://git@github.com:/FlowingCode/OtpFieldAddon.git</developerConnection>
-        <tag>1.0.0</tag>
+        <tag>master</tag>
     </scm>
     
     <developers>
