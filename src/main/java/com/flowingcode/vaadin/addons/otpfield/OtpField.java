@@ -27,7 +27,6 @@ import com.vaadin.flow.component.HasAriaLabel;
 import com.vaadin.flow.component.HasPlaceholder;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.dependency.JsModule;
-import com.vaadin.flow.component.dependency.NpmPackage;
 import com.vaadin.flow.component.shared.HasAllowedCharPattern;
 import com.vaadin.flow.component.shared.HasPrefix;
 import com.vaadin.flow.component.shared.HasSuffix;
@@ -102,8 +101,6 @@ import java.util.regex.PatternSyntaxException;
  */
 @Tag("fc-otp-field")
 @JsModule("./fc-otp-field/otp-field.ts")
-@NpmPackage(value = "@vaadin/field-base", version = "25.2.7")
-@NpmPackage(value = "@vaadin/component-base", version = "25.2.7")
 @SuppressWarnings("serial")
 public class OtpField extends AbstractSinglePropertyField<OtpField, String>
     implements InputField<AbstractField.ComponentValueChangeEvent<OtpField, String>, String>,
